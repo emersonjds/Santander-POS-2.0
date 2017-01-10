@@ -1,0 +1,40 @@
+
+html, body {
+	height: 100%;
+	width: 100%;	
+	background-image: url('../img/bk-freeze-ga.jpg');
+	padding: 0;
+	margin:0;
+}
+
+body {
+	overflow-y: hidden;
+	-webkit-user-select:none;
+}
+
+.index-main {
+	padding: 1em;
+}
+
+.titulo-valor {
+	font-family: 'Chewy', cursive;
+}
+
+.dados-de-compra {
+	height: 100%;
+	background-color: #fff;
+}
+
+.btn-enviar-valor {
+	width: 100%;
+	background-color: #ffbc1a;
+}
+
+.flex {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+

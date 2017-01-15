@@ -7,20 +7,50 @@
 </head>
 <link rel="stylesheet" href="css/materialize.css">
 <link rel="stylesheet" href="css/materialize.min.css">
-<link rel="stylesheet" href="css/style.css">
-<link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet">
 <link rel="stylesheet" href="icons/material.css">
+<link rel="stylesheet" href="css/password.css">
+<link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet">
+
 
 <body>
-	<main class="index-main">
+	<main class="password-main">
 		<div class="container">
-			<figure>
-				<img src="img/logo-grande.png" alt="imagem-logo" class="responsive-img">
-			</figure>
+			<div class="row img-icons">
+				<div class="col-s12">
+					<figure class="img-card-machine">
+						<img src="img/card-machine.png" alt="imagem-logo">
+					</figure>
+				</div>				
+
+				<div class="img-porco">
+					<figure>
+						<img src="img/porco.png" alt="imagem-logo">
+					</figure>
+				</div>
+			</div>
 		</div>
 		<br>
-		<section class="dados-de-compra">
+		<section class="dados-de-usuario">
 			<div class="container">
+				<div class="valign-wrapper flex">
+					<h4 class="valign titulo-valor">Informe a senha</h4>
+				</div>
+
+				<div class="row">
+					<form class="col s12">
+						<div class="input-field">
+							<i class="material-icons prefix icone">credit_card</i>
+							<input id="icon_prefix" type="password" class="validate">
+							<label for="icon_prefix">Senha do cartão</label>
+						</div>
+						<br>
+						<a href="obrigado.html" class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
+					</form>
+				</div>
+				
+			</div>
+
+			<!-- <div class="container">
 				<div class="valign-wrapper flex">
 					<h4 class="valign titulo-valor">Informe a senha</h4>
 				</div>
@@ -34,10 +64,10 @@
 							<label for="icon_prefix">Senha do cartão</label>
 						</div>
 						<br>
-						<a class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
+						<a href="obrigado.html" class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
 					</form>
 				</div>
-			</div>
+			</div> -->
 		</section>
 	</main>
 

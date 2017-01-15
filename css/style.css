@@ -12,12 +12,35 @@ body {
 	-webkit-user-select:none;
 }
 
-.index-main {
+.index-main, .password-main {
 	padding: 1em;
 }
 
 .titulo-valor {
 	font-family: 'Chewy', cursive;
+}
+
+.img-icons {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.img-porco {
+	position: absolute;
+	top: -30px;
+	right: -50px;
+}
+
+.msg-thanks {
+	margin-top: -15px;
+	align-items: center;
+	color: #fff;
+	display: flex;
+	font-family: 'Chewy', cursive;
+	justify-content: center;
+	text-align: center;
 }
 
 .dados-de-compra {

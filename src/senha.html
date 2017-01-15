@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<title></title>
+</head>
+<link rel="stylesheet" href="css/materialize.css">
+<link rel="stylesheet" href="css/materialize.min.css">
+<link rel="stylesheet" href="icons/material.css">
+<link rel="stylesheet" href="css/password.css">
+<link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet">
+
+<body>
+	<main class="password-main">
+		<div class="container">
+			<div class="row img-icons">
+				<div class="col-s12">
+					<figure class="img-card-machine">
+						<img src="img/card-machine.png" alt="imagem-logo">
+					</figure>
+				</div>				
+
+				<div class="img-porco">
+					<figure>
+						<img src="img/porco.png" alt="imagem-logo">
+					</figure>
+				</div>
+			</div>
+		</div>
+		<br>
+		<section class="dados-de-usuario">
+			<div class="container">
+				<div class="valign-wrapper flex">
+					<h4 class="valign titulo-valor">Informe a senha</h4>
+				</div>
+
+				<div id="testando"></div>
+
+				<div class="row">
+					<form class="col s12">
+						<div class="input-field">
+							<i class="material-icons prefix icone">credit_card</i>
+							<input id="icon_prefix" type="password" class="validate">
+							<label for="icon_prefix">Senha do cartão</label>
+						</div>
+						<br>
+						<a onclick="login();" class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
+						<!-- <a onclick="adicionaNovoExtrato();" class="waves-effect waves-light btn btn-enviar-valor">EXTRATO</a> -->
+					</form>
+				</div>
+				
+			</div>
+		</section>
+	</main>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script src="js/materialize.min.js"></script>	
+</body>
+
+<script>
+
+    var idUsuario; 
+
+	var config = {
+		apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
+		authDomain: "bankbox-63f33.firebaseapp.com",
+		databaseURL: "https://bankbox-63f33.firebaseio.com",
+		storageBucket: "bankbox-63f33.appspot.com",
+		messagingSenderId: "534967674886"
+	};
+	firebase.initializeApp(config);
+
+	var provider = new firebase.auth.GoogleAuthProvider();
+
+
+	function writeUserData(userId, name, lastAcess, username) {
+		firebase.database().ref('users/' + userId).set({
+			userId : '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2',
+			email: 'dev.bankbox@gmail.com',
+			lastAcess: '14 de J de 2017 - 12:49',
+			username: 'Emerson Junior Testando'
+		});
+	}
+
+	function adicionaNovoUsuario() {
+
+		var usuario = {
+			email: 'dev.bankbox@gmail.com',
+			lastAcess: '14 de J de 2017 - 12:49',
+			username: 'Emerson Junior Testando'
+		};
+
+		var updates = {};
+		updates['/users/'+idUsuario] = usuario;
+
+		return firebase.database().ref().update(updates);
+	}
+
+	function adicionaNovoExtrato() {
+		firebase.database().ref('extrato/' + idUsuario).push().set({
+	    	imgCategoria : 2130837588,
+			status: 0,
+			tipo: 'Cantina da Escola',
+			valor: 'R$ 5,00'
+	  	});
+	}
+
+	function login() {
+		firebase.auth().signInWithPopup(provider).then(function(result) {
+		  // This gives you a Google Access Token. You can use it to access the Google API.
+		  var token = result.credential.accessToken;
+		  // The signed-in user info.
+		  var user = result.user;
+		  
+		  idUsuario = user.uid;
+
+		}).catch(function(error) {
+		  // Handle Errors here.
+		  var errorCode = error.code;
+		  var errorMessage = error.message;
+		  // The email of the user's account used.
+		  var email = error.email;
+		  // The firebase.auth.AuthCredential type that was used.
+		  var credential = error.credential;
+		  // ...
+		});
+	}
+
+</script>
+
+</html>

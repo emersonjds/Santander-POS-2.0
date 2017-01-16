@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<title></title>
+</head>
+<body>
+	<button onclick="login();">LOGAR</button><br/>
+	<button onclick="adicionaNovoUsuario();">Salvar Acesso</button><br/>
+	<button onclick="adicionaNovoExtrato();">Salvar Extrato</button><br/>
+	<button onclick="recuperaGasto();">Recupera Dados</button><br/>
+	<input type="number" id="txtStatus" /><br/>
+	<input type="text" id="txtTipo" /><br/>
+	<input type="text" id="txtValor" /><br/>
+
+</body>
+	<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script  src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+
+<script>
+
+    var idUsuario; 
+
+	var config = {
+		apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
+		authDomain: "bankbox-63f33.firebaseapp.com",
+		databaseURL: "https://bankbox-63f33.firebaseio.com",
+		storageBucket: "bankbox-63f33.appspot.com",
+		messagingSenderId: "534967674886"
+	};
+	firebase.initializeApp(config);
+
+	var provider = new firebase.auth.GoogleAuthProvider();
+
+function login() {
+		firebase.auth().signInWithPopup(provider).then(function(result) {
+		  // This gives you a Google Access Token. You can use it to access the Google API.
+		  var token = result.credential.accessToken;
+		  // The signed-in user info.
+		  var user = result.user;
+
+		  email = result.user.email;
+
+		  nome = result.user.displayName;
+		  
+		  idUsuario = user.uid;
+
+		}).catch(function(error) {
+		  // Handle Errors here.
+		  var errorCode = error.code;
+		  var errorMessage = error.message;
+		  // The email of the user's account used.
+		  var email = error.email;
+		  // The firebase.auth.AuthCredential type that was used.
+		  var credential = error.credential;
+		  // ...
+		});
+	}
+
+function adicionaNovoUsuario() {
+
+		var usuario = {
+			email: email,
+			lastAcess: '14 de Jan de 2017 - 14:00',
+			username: nome
+		};
+
+		var updates = {};
+		updates['/users/'+idUsuario] = usuario;
+
+		return firebase.database().ref().update(updates);
+	}
+
+	function adicionaNovoExtrato() {
+		var status = $("#txtStatus").val();
+		var tipo = $("#txtTipo").val();
+		var valor = $("#txtValor").val();
+
+		firebase.database().ref('extrato/' + idUsuario).push().set({
+	    	imgCategoria : 2130837588,
+			status: status,
+			tipo: tipo,
+			valor: valor
+	  	});
+	}
+
+	function recuperaGasto(){
+
+		var ganhos = 0;
+		var gastos = 0;
+		var saldo = 0;
+
+		var Gastos = firebase.database().ref('extrato/' + idUsuario);
+		Gastos.on('value', function(transacoes) {
+		    transacoes.forEach(function(descTransacao) {
+		      var statusTrans = descTransacao.val()["status"];
+		      var valorTrans = descTransacao.val()["valor"];
+		      var valorTrans = valorTrans.replace(",",".");
+		      var novoValor = parseFloat(valorTrans.replace("R$ ",""));
+
+		      console.log(novoValor);
+		      if(statusTrans == 0){
+		      	gastos = gastos + novoValor;
+		      } else {
+		      	ganhos = ganhos + novoValor;
+		      }
+		      
+		    });
+		    saldo = ganhos - gastos;
+		console.log(saldo);
+		});
+		
+	}
+
+</script>
+
+</html>

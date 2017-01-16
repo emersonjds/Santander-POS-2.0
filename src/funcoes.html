@@ -6,13 +6,12 @@
 	<title></title>
 </head>
 <body>
-	<button onclick="login();">LOGAR</button><br/>
-	<button onclick="adicionaNovoUsuario();">Salvar Acesso</button><br/>
-	<button onclick="adicionaNovoExtrato();">Salvar Extrato</button><br/>
-	<button onclick="recuperaGasto();">Recupera Dados</button><br/>
-	<input type="number" id="txtStatus" /><br/>
-	<input type="text" id="txtTipo" /><br/>
-	<input type="text" id="txtValor" /><br/>
+	<button onclick="login();">LOGAR</button><br/><br/>
+	<button onclick="adicionaNovoUsuario();">Salvar Acesso</button><br/><br/>
+	<button onclick="Saldo();">Recupera Saldo</button> - R$<span id="saldoValor"></span><br/><br/>
+	<button onclick="adicionaNovoExtrato();">Gerar débito</button><br/><br/>
+	<input type="text" id="txtTipo" placeholder="Descrição" /><br/><br/>
+	<input type="number" id="txtValor" placeholder="Valor (apenas números)" /><br/><br/>
 
 </body>
 	<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
@@ -64,6 +63,7 @@ function adicionaNovoUsuario() {
 		var usuario = {
 			email: email,
 			lastAcess: '14 de Jan de 2017 - 14:00',
+			saldo: '1005,50',
 			username: nome
 		};
 
@@ -74,19 +74,41 @@ function adicionaNovoUsuario() {
 	}
 
 	function adicionaNovoExtrato() {
-		var status = $("#txtStatus").val();
+		//var status = $("#txtStatus").val();
 		var tipo = $("#txtTipo").val();
-		var valor = $("#txtValor").val();
+		var valor = ($("#txtValor").val()).replace(",",".");
+		var valorSaldo = ($("#saldoValor").html()).replace(",",".");
 
 		firebase.database().ref('extrato/' + idUsuario).push().set({
 	    	imgCategoria : 2130837588,
-			status: status,
+			status: 0,
 			tipo: tipo,
-			valor: valor
+			valor: ("R$ " + valor)
 	  	});
+
+		valorSaldo = valorSaldo - valor;
+
+		console.log (valorSaldo);
+		salvarSaldo = (valorSaldo.toString()).replace(".",",");
+
+	  	var usuario = {
+			saldo: salvarSaldo
+		};
+
+		var updates = {};
+		updates['/users/'+idUsuario] = usuario;
+
+		firebase.database().ref().update(updates);
 	}
 
-	function recuperaGasto(){
+function Saldo() {
+	var userSaldo = firebase.database().ref('users/' + idUsuario);
+	userSaldo.on('value', function(opcoes) {
+		$("#saldoValor").html(opcoes.val()["saldo"]);
+	});
+}
+
+	function recuperaGastos(){
 
 		var ganhos = 0;
 		var gastos = 0;

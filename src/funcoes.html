@@ -8,134 +8,116 @@
 <body>
 	<button onclick="login();">LOGAR</button><br/><br/>
 	<button onclick="adicionaNovoUsuario();">Salvar Acesso</button><br/><br/>
-	<button onclick="Saldo();">Recupera Saldo</button> - R$<span id="saldoValor"></span><br/><br/>
-	<button onclick="adicionaNovoExtrato();">Gerar débito</button><br/><br/>
+	<button id='recuperarSaldo'>Recupera Saldo</button> - R$<span id="saldoValor"></span><br/><br/>
+	<button id='gerarDebito'>Gerar débito</button><br/><br/>
 	<input type="text" id="txtTipo" placeholder="Descrição" /><br/><br/>
 	<input type="number" id="txtValor" placeholder="Valor (apenas números)" /><br/><br/>
 
 </body>
-	<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	<script  src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+
+<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
 
 <script>
-
-    var idUsuario; 
-
-	var config = {
-		apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
-		authDomain: "bankbox-63f33.firebaseapp.com",
-		databaseURL: "https://bankbox-63f33.firebaseio.com",
-		storageBucket: "bankbox-63f33.appspot.com",
-		messagingSenderId: "534967674886"
-	};
-	firebase.initializeApp(config);
-
-	var provider = new firebase.auth.GoogleAuthProvider();
-
-function login() {
-		firebase.auth().signInWithPopup(provider).then(function(result) {
-		  // This gives you a Google Access Token. You can use it to access the Google API.
-		  var token = result.credential.accessToken;
-		  // The signed-in user info.
-		  var user = result.user;
-
-		  email = result.user.email;
-
-		  nome = result.user.displayName;
-		  
-		  idUsuario = user.uid;
-
-		}).catch(function(error) {
-		  // Handle Errors here.
-		  var errorCode = error.code;
-		  var errorMessage = error.message;
-		  // The email of the user's account used.
-		  var email = error.email;
-		  // The firebase.auth.AuthCredential type that was used.
-		  var credential = error.credential;
-		  // ...
+	$(function(){
+		$('#recuperarSaldo').click(function(){
+			Saldo();
 		});
-	}
 
-function adicionaNovoUsuario() {
+		$('#gerarDebito').click(function(){
+			adicionaNovoExtrato();
+		});
 
-		var usuario = {
-			email: email,
-			lastAcess: '14 de Jan de 2017 - 14:00',
-			saldo: '1005,50',
-			username: nome
+		var idUsuario;
+
+		idUsuario = '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2'; 
+
+		var config = {
+			apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
+			authDomain: "bankbox-63f33.firebaseapp.com",
+			databaseURL: "https://bankbox-63f33.firebaseio.com",
+			storageBucket: "bankbox-63f33.appspot.com",
+			messagingSenderId: "534967674886"
 		};
+		firebase.initializeApp(config);
 
-		var updates = {};
-		updates['/users/'+idUsuario] = usuario;
+		var provider = new firebase.auth.GoogleAuthProvider();
 
-		return firebase.database().ref().update(updates);
-	}
+		function login() {
+			firebase.auth().signInWithPopup(provider).then(function(result) {
+				var token = result.credential.accessToken;
+				var user = result.user;
+				email = result.user.email;
+				nome = result.user.displayName;
 
-	function adicionaNovoExtrato() {
-		//var status = $("#txtStatus").val();
-		var tipo = $("#txtTipo").val();
-		var valor = ($("#txtValor").val()).replace(",",".");
-		var valorSaldo = ($("#saldoValor").html()).replace(",",".");
+				idUsuario = user.uid;
 
-		firebase.database().ref('extrato/' + idUsuario).push().set({
-	    	imgCategoria : 2130837588,
-			status: 0,
-			tipo: tipo,
-			valor: ("R$ " + valor)
-	  	});
+			}).catch(function(error) {
+			  // Handle Errors here.
+			  var errorCode = error.code;
+			  var errorMessage = error.message;
+			  // The email of the user's account used.
+			  var email = error.email;
+			  // The firebase.auth.AuthCredential type that was used.
+			  var credential = error.credential;
+			  // ...
+			});
+		}
 
-		valorSaldo = valorSaldo - valor;
+		function adicionaNovoUsuario() {
+			var usuario = {
+				email: email,
+				lastAcess: '14 de Jan de 2017 - 14:00',
+				saldo: '1005,50',
+				username: nome
+			};
 
-		console.log (valorSaldo);
-		salvarSaldo = (valorSaldo.toString()).replace(".",",");
+			var updates = {};
+			updates['/users/'+idUsuario] = usuario;
 
-	  	var usuario = {
-			saldo: salvarSaldo
-		};
+			return firebase.database().ref().update(updates);
+		}
 
-		var updates = {};
-		updates['/users/'+idUsuario] = usuario;
+		function adicionaNovoExtrato() {
 
-		firebase.database().ref().update(updates);
-	}
+			var tipo = $("#txtTipo").val();
+			var valor = ($("#txtValor").val()).replace(",",".");
+			var valorSaldo = ($("#saldoValor").html()).replace(",",".");
 
-function Saldo() {
-	var userSaldo = firebase.database().ref('users/' + idUsuario);
-	userSaldo.on('value', function(opcoes) {
-		$("#saldoValor").html(opcoes.val()["saldo"]);
+			firebase.database().ref('extrato/' + idUsuario).push().set({
+				imgCategoria : 2130837588,
+				status: 0,
+				tipo: tipo,
+				valor: ("R$ " + valor)
+			});
+
+			valorSaldo = valorSaldo -  valor;
+
+			console.log (valorSaldo);
+			salvarSaldo = (valorSaldo.toString()).replace(".",",");
+
+			var usuario = {
+				email: 'dev.bankbox@gmail.com',
+				lastAcess: '14 de Jan de 2017 - 14:00',
+				saldo: '' + valorSaldo  + ',00',
+				username: 'Account Bankbox Developer'
+			};
+
+			var updates = {};
+			updates['/users/'+idUsuario] = usuario;
+
+			firebase.database().ref().update(updates);
+		}
+
+		function Saldo() {
+			var userSaldo = firebase.database().ref('users/' + idUsuario);
+			userSaldo.on('value', function(opcoes) {
+				$("#valor").val(opcoes.val()["saldo"]);
+			});
+		}
+
 	});
-}
-
-	function recuperaGastos(){
-
-		var ganhos = 0;
-		var gastos = 0;
-		var saldo = 0;
-
-		var Gastos = firebase.database().ref('extrato/' + idUsuario);
-		Gastos.on('value', function(transacoes) {
-		    transacoes.forEach(function(descTransacao) {
-		      var statusTrans = descTransacao.val()["status"];
-		      var valorTrans = descTransacao.val()["valor"];
-		      var valorTrans = valorTrans.replace(",",".");
-		      var novoValor = parseFloat(valorTrans.replace("R$ ",""));
-
-		      console.log(novoValor);
-		      if(statusTrans == 0){
-		      	gastos = gastos + novoValor;
-		      } else {
-		      	ganhos = ganhos + novoValor;
-		      }
-		      
-		    });
-		    saldo = ganhos - gastos;
-		console.log(saldo);
-		});
-		
-	}
-
 </script>
 
 </html>

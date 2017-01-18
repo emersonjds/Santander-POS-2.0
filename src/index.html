@@ -29,7 +29,7 @@
 					<form class="col s12">
 						<div class="input-field">
 							<i class="material-icons prefix">attach_money</i>
-							<input id="icon_prefix" type="number" class="validate">
+							<input id="icon_prefix" type="text" value="R$ 50,00" class="valorProduto">
 							<label for="icon_prefix">PREÇO</label>
 						</div>
 						<br>
@@ -43,4 +43,10 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/materialize.min.js"></script>	
 </body>
+	
+	<script>
+		$(document).ready(function() {
+			$('valorProduto').focus();
+		});
+	</script>
 </html>

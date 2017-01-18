@@ -41,12 +41,13 @@
 					<form class="col s12">
 						<div class="input-field">
 							<i class="material-icons prefix icone">credit_card</i>
-							<input id="icon_prefix" type="password" class="validate">
+							<input type="hidden" id="valor">
+							<input id="icon_prefix" type="password" class="senha" value="1234">
 							<label for="icon_prefix">Senha do cartão</label>
 						</div>
 						<br>
-						<a onclick="login();" class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
-						<!-- <a onclick="adicionaNovoExtrato();" class="waves-effect waves-light btn btn-enviar-valor">EXTRATO</a> -->
+						<a class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
+						
 					</form>
 				</div>
 				
@@ -54,7 +55,7 @@
 		</section>
 	</main>
 
-	<script src="js/jquery.min.js"></script>
+	<script src="node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
 	<script src="js/materialize.min.js"></script>	
@@ -62,7 +63,18 @@
 
 <script>
 
-    var idUsuario; 
+	$(document).ready(function() {
+		$('.senha').focus();
+		login();
+		Saldo();
+
+		$('.btn-enviar-valor').click(function(){
+
+			adicionaNovoExtrato();	
+		});
+	});
+
+	var idUsuario; 
 
 	var config = {
 		apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
@@ -72,9 +84,11 @@
 		messagingSenderId: "534967674886"
 	};
 	firebase.initializeApp(config);
-
 	var provider = new firebase.auth.GoogleAuthProvider();
+	// login();
+	// Saldo();
 
+	
 
 	function writeUserData(userId, name, lastAcess, username) {
 		firebase.database().ref('users/' + userId).set({
@@ -101,11 +115,11 @@
 
 	function adicionaNovoExtrato() {
 		firebase.database().ref('extrato/' + idUsuario).push().set({
-	    	imgCategoria : 2130837588,
+			imgCategoria : 2130837588,
 			status: 0,
 			tipo: 'Cantina da Escola',
 			valor: 'R$ 5,00'
-	  	});
+		});
 	}
 
 	function login() {
@@ -130,6 +144,46 @@
 		  // ...
 		});
 	}
+
+	function adicionaNovoExtrato() {
+
+		var tipo = $("#txtTipo").val();
+		var valor = ($("#txtValor").val()).replace(",",".");
+		var valorSaldo = ($("#saldoValor").html()).replace(",",".");
+
+		firebase.database().ref('extrato/' + idUsuario).push().set({
+			imgCategoria : 2130837588,
+			status: 0,
+			tipo: tipo,
+			valor: ("R$ " + valor)
+		});
+
+		valorSaldo = valorSaldo -  valor;
+
+		console.log (valorSaldo);
+		salvarSaldo = (valorSaldo.toString()).replace(".",",");
+
+		var usuario = {
+			email: 'dev.bankbox@gmail.com',
+			lastAcess: '14 de Jan de 2017 - 14:00',
+			saldo: '' + valorSaldo  + ',00',
+			username: 'Account Bankbox Developer'
+		};
+
+		var updates = {};
+		updates['/users/'+idUsuario] = usuario;
+
+		firebase.database().ref().update(updates);
+	}
+
+	function Saldo() {
+		var userSaldo = firebase.database().ref('users/' + idUsuario);
+		userSaldo.on('value', function(opcoes) {
+			$("#saldoValor").html(opcoes.val()["saldo"]);
+		});
+	}
+
+
 
 </script>
 

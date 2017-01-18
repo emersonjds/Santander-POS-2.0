@@ -46,8 +46,7 @@
 							<label for="icon_prefix">Senha do cartão</label>
 						</div>
 						<br>
-						<a class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
-						
+						<a id='gerarDebito' class="waves-effect waves-light btn btn-enviar-valor">ENVIAR</a>
 					</form>
 				</div>
 				
@@ -64,8 +63,9 @@
 
 <script>
 	$(document).ready(function() {
-			// console.log('julio')
-		// login();
+		$('#gerarDebito').click(function(){
+			adicionaNovoExtrato();
+		});
 	});
 
 

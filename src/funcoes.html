@@ -96,18 +96,18 @@
 			imgCategoria : 2130837588,
 			status: 0,
 			tipo: tipo,
-			valor: ("R$ " + valor)
+			valor: ("R$" + valor + ',00')
 		});
 
 		valorSaldo = valorSaldo -  valor;
 
-		console.log (valorSaldo);
+		console.log('Saldo com debito: ' + valorSaldo);
 		salvarSaldo = (valorSaldo.toString()).replace(".",",");
 
 		var usuario = {
 			email: 'dev.bankbox@gmail.com',
 			lastAcess: '14 de Jan de 2017 - 14:00',
-			saldo: '' + valorSaldo  + ',00',
+			saldo: '' + valorSaldo + ',00',
 			username: 'Account Bankbox Developer'
 		};
 

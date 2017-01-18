@@ -1,8 +1,8 @@
 	$(function(){
 		login();
-		$('.btn-enviar-valor').click(function() {
+		// $('.btn-enviar-valor').click(function() {
 
-		});
+		// });
 
 		// $('#recuperarSaldo').click(function(){
 		// 	Saldo();
@@ -15,6 +15,7 @@
 
 
 	var idUsuario;
+	var saldoAtual;
 
 	//idUsuario = '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2'; 
 
@@ -70,26 +71,38 @@
 
 	function adicionaNovoExtrato() {
 
-		var tipo = $("#txtTipo").val();
-		var valor = ($("#txtValor").val()).replace(",",".");
-		var valorSaldo = ($("#saldoValor").html()).replace(",",".");
+		// var tipo = $("#txtTipo").val();
+		// var valor = ($("#txtValor").val()).replace(",",".");
+		// var valorSaldo = ($("#saldoValor").html()).replace(",",".");
+
+		var tipo = 'Cantina - Colegio Bandeirantes';
+		var valor = 50.00;
+		var valorSaldo = saldoAtual.replace(",",".");
 
 		firebase.database().ref('extrato/' + idUsuario).push().set({
 			imgCategoria : 2130837588,
 			status: 0,
 			tipo: tipo,
-			valor: ("R$ " + valor)
+			valor: ("R$" + valor + ',00')
 		});
 
 		valorSaldo = valorSaldo -  valor;
+		console.log('Valor do debito: ' + valor);
+		console.log('Saldo sem debito: ' + saldoAtual);
 
-		console.log (valorSaldo);
-		salvarSaldo = (valorSaldo.toString()).replace(".",",");
-
+		console.log('Saldo com debito: ' + valorSaldo);
+		// console.log (valorSaldo);
+		if ((''+valorSaldo).indexOf(".") != -1){ 
+			valorSaldo = (valorSaldo.toString()).replace(".",",");
+		}else{
+			console.log('else do .');
+			valorSaldo = valorSaldo.toString();
+		}
+			
 		var usuario = {
 			email: 'dev.bankbox@gmail.com',
 			lastAcess: '14 de Jan de 2017 - 14:00',
-			saldo: '' + valorSaldo  + ',00',
+			saldo: '' + valorSaldo + ',00',
 			username: 'Account Bankbox Developer'
 		};
 
@@ -97,6 +110,8 @@
 		updates['/users/'+idUsuario] = usuario;
 
 		firebase.database().ref().update(updates);
+
+		// $(location).attr('href','obrigado.html');
 	}
 
 	function Saldo() {
@@ -104,7 +119,9 @@
 		var userSaldo = firebase.database().ref('users/' + idUsuario);
 		userSaldo.on('value', function(opcoes) {
 			//$("#saldoValor").html(opcoes.val()["saldo"]);
-			console.log(opcoes.val()["saldo"]);
+			// console.log(opcoes.val()["saldo"]);
+			saldoAtual = opcoes.val()["saldo"];
+			console.log('Saldo retornado pela API: ' + opcoes.val()["saldo"]);
 
 		});
 	}

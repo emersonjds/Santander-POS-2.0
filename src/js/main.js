@@ -111,7 +111,7 @@
 
 		firebase.database().ref().update(updates);
 
-		// $(location).attr('href','obrigado.html');
+		$(location).attr('href','obrigado.html');
 	}
 
 	function Saldo() {

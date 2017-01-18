@@ -6,7 +6,7 @@
 	<title></title>
 </head>
 <body>
-	<button onclick="login();">LOGAR</button><br/><br/>
+	<button onclick="login();" class="logar">LOGAR</button><br/><br/>
 	<button onclick="adicionaNovoUsuario();">Salvar Acesso</button><br/><br/>
 	<button id='recuperarSaldo'>Recupera Saldo</button> - R$<span id="saldoValor"></span><br/><br/>
 	<button id='gerarDebito'>Gerar débito</button><br/><br/>
@@ -20,6 +20,11 @@
 <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
 
 <script>
+
+	function teste() {
+		console.log('teste');
+	}
+
 	$(function(){
 		$('#recuperarSaldo').click(function(){
 			Saldo();
@@ -28,32 +33,34 @@
 		$('#gerarDebito').click(function(){
 			adicionaNovoExtrato();
 		});
+	});
 
-		var idUsuario;
 
-		idUsuario = '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2'; 
+	var idUsuario;
 
-		var config = {
-			apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
-			authDomain: "bankbox-63f33.firebaseapp.com",
-			databaseURL: "https://bankbox-63f33.firebaseio.com",
-			storageBucket: "bankbox-63f33.appspot.com",
-			messagingSenderId: "534967674886"
-		};
-		firebase.initializeApp(config);
+	//idUsuario = '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2'; 
 
-		var provider = new firebase.auth.GoogleAuthProvider();
+	var config = {
+		apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
+		authDomain: "bankbox-63f33.firebaseapp.com",
+		databaseURL: "https://bankbox-63f33.firebaseio.com",
+		storageBucket: "bankbox-63f33.appspot.com",
+		messagingSenderId: "534967674886"
+	};
+	firebase.initializeApp(config);
 
-		function login() {
-			firebase.auth().signInWithPopup(provider).then(function(result) {
-				var token = result.credential.accessToken;
-				var user = result.user;
-				email = result.user.email;
-				nome = result.user.displayName;
+	var provider = new firebase.auth.GoogleAuthProvider();
 
-				idUsuario = user.uid;
+	function login() {
+		firebase.auth().signInWithPopup(provider).then(function(result) {
+			var token = result.credential.accessToken;
+			var user = result.user;
+			email = result.user.email;
+			nome = result.user.displayName;
 
-			}).catch(function(error) {
+			idUsuario = user.uid;
+
+		}).catch(function(error) {
 			  // Handle Errors here.
 			  var errorCode = error.code;
 			  var errorMessage = error.message;
@@ -63,61 +70,64 @@
 			  var credential = error.credential;
 			  // ...
 			});
-		}
+	}
 
-		function adicionaNovoUsuario() {
-			var usuario = {
-				email: email,
-				lastAcess: '14 de Jan de 2017 - 14:00',
-				saldo: '1005,50',
-				username: nome
-			};
+	function adicionaNovoUsuario() {
+		var usuario = {
+			email: email,
+			lastAcess: '14 de Jan de 2017 - 14:00',
+			saldo: '1005,50',
+			username: nome
+		};
 
-			var updates = {};
-			updates['/users/'+idUsuario] = usuario;
+		var updates = {};
+		updates['/users/'+idUsuario] = usuario;
 
-			return firebase.database().ref().update(updates);
-		}
+		return firebase.database().ref().update(updates);
+	}
 
-		function adicionaNovoExtrato() {
+	function adicionaNovoExtrato() {
 
-			var tipo = $("#txtTipo").val();
-			var valor = ($("#txtValor").val()).replace(",",".");
-			var valorSaldo = ($("#saldoValor").html()).replace(",",".");
+		var tipo = $("#txtTipo").val();
+		var valor = ($("#txtValor").val()).replace(",",".");
+		var valorSaldo = ($("#saldoValor").html()).replace(",",".");
 
-			firebase.database().ref('extrato/' + idUsuario).push().set({
-				imgCategoria : 2130837588,
-				status: 0,
-				tipo: tipo,
-				valor: ("R$ " + valor)
-			});
+		firebase.database().ref('extrato/' + idUsuario).push().set({
+			imgCategoria : 2130837588,
+			status: 0,
+			tipo: tipo,
+			valor: ("R$ " + valor)
+		});
 
-			valorSaldo = valorSaldo -  valor;
+		valorSaldo = valorSaldo -  valor;
 
-			console.log (valorSaldo);
-			salvarSaldo = (valorSaldo.toString()).replace(".",",");
+		console.log (valorSaldo);
+		salvarSaldo = (valorSaldo.toString()).replace(".",",");
 
-			var usuario = {
-				email: 'dev.bankbox@gmail.com',
-				lastAcess: '14 de Jan de 2017 - 14:00',
-				saldo: '' + valorSaldo  + ',00',
-				username: 'Account Bankbox Developer'
-			};
+		var usuario = {
+			email: 'dev.bankbox@gmail.com',
+			lastAcess: '14 de Jan de 2017 - 14:00',
+			saldo: '' + valorSaldo  + ',00',
+			username: 'Account Bankbox Developer'
+		};
 
-			var updates = {};
-			updates['/users/'+idUsuario] = usuario;
+		var updates = {};
+		updates['/users/'+idUsuario] = usuario;
 
-			firebase.database().ref().update(updates);
-		}
+		firebase.database().ref().update(updates);
+	}
 
-		function Saldo() {
-			var userSaldo = firebase.database().ref('users/' + idUsuario);
-			userSaldo.on('value', function(opcoes) {
-				$("#valor").val(opcoes.val()["saldo"]);
-			});
-		}
+	function Saldo() {
 
-	});
+		var userSaldo = firebase.database().ref('users/' + idUsuario);
+		userSaldo.on('value', function(opcoes) {
+			$("#saldoValor").html(opcoes.val()["saldo"]);
+			alert(opcoes.val()["saldo"]);
+
+		});
+	}
+
+
 </script>
 
 </html>

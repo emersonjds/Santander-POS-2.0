@@ -1,15 +1,22 @@
-$(function(){
-	$('#recuperarSaldo').click(function(){
-		Saldo();
+	$(function(){
+		login();
+		$('.btn-enviar-valor').click(function() {
+
+		});
+
+		// $('#recuperarSaldo').click(function(){
+		// 	Saldo();
+		// });
+
+		// $('#gerarDebito').click(function(){
+		// 	adicionaNovoExtrato();
+		// });
 	});
 
-	$('#gerarDebito').click(function(){
-		adicionaNovoExtrato();
-	});
 
 	var idUsuario;
 
-	idUsuario = '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2'; 
+	//idUsuario = '3cBXwAZaiMe6S4xY4Xg9L80R4MQ2'; 
 
 	var config = {
 		apiKey: "AIzaSyCCk8rCPRokRRjuYA07SSdIWADr2bAyFqU",
@@ -31,6 +38,9 @@ $(function(){
 
 			idUsuario = user.uid;
 
+			//console.log(idUsuario);
+
+			Saldo();	
 		}).catch(function(error) {
 			  // Handle Errors here.
 			  var errorCode = error.code;
@@ -41,6 +51,7 @@ $(function(){
 			  var credential = error.credential;
 			  // ...
 			});
+		
 	}
 
 	function adicionaNovoUsuario() {
@@ -89,10 +100,11 @@ $(function(){
 	}
 
 	function Saldo() {
+		// console.log(idUsuario);
 		var userSaldo = firebase.database().ref('users/' + idUsuario);
 		userSaldo.on('value', function(opcoes) {
-			$("#saldoValor").html(opcoes.val()["saldo"]);
+			//$("#saldoValor").html(opcoes.val()["saldo"]);
+			console.log(opcoes.val()["saldo"]);
+
 		});
 	}
-
-});
